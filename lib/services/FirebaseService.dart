@@ -10,36 +10,50 @@ import 'package:image_picker/image_picker.dart';
 
 import '../models/servicemodel.dart';
 import '../models/AdminModel.dart';
+import 'auth.dart';
 
 class FirebaseService {
-  /*Future<Usermodel> getuserdata() async {
+  Future<AdminModel> getuserdata() async {
     User? user = await Authentication.getUserId();
     final CollectionReference collection =
-        FirebaseFirestore.instance.collection('Users');
+        FirebaseFirestore.instance.collection('Admin');
     DocumentSnapshot<Object?> model = await collection.doc(user!.uid).get();
-    print("Current user : ${user!.uid}");
-    print("Current user : ${model.data().toString()}");
-    if(model.data().isNull){
-      return Usermodel(
-          uid: "",
-          name: "",
-          surname: "",
+    print("Current Admin : ${user!.uid}");
+    print("Current Admin : ${model.data().toString()}");
+    if (model.data().isNull) {
+      return AdminModel(
+          aid: "",
           email: "",
-          mobilenumber: "",
           address: "",
-          photo: "");
-    }else{
-      return Usermodel(
-          uid: model.get("uid"),
-          name: model.get("Name"),
-          surname: model.get("Surname"),
+          category: "",
+          image: "",
+          location: "",
+          rating: "",
+          salonid: "",
+          salonname: "");
+    } else {
+      return AdminModel(
+          aid: model.get("uid"),
           email: model.get("email"),
-          mobilenumber: model.get("mobilenumber"),
           address: model.get("address"),
-          photo: model.get("photo"));
+          category: model.get("category"),
+          image: model.get("image"),
+          location: model.get("location"),
+          rating: model.get("rating"),
+          salonid: model.get("salonid"),
+          salonname: model.get("salonname"));
     }
+  }
 
-  }*/
+  Future<List<ServiceModel>> loadservicesFromfirebase(String salonid) async {
+    final CollectionReference collection =
+    FirebaseFirestore.instance.collection('service');
+    QuerySnapshot snapshot =
+    await collection.where('salon_id', isEqualTo: salonid).get();
+
+    return await List.from(
+        snapshot.docs.map((element) => fromQuerySnapshotService(element)));
+  }
 
   Future<String?> storeAdmin(String aid, String email) async {
     try {

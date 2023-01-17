@@ -7,7 +7,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:salon_admin/services/MainController.dart';
 import 'login.dart';
-import 'services/auth_services.dart';
 import 'themes.dart';
 import 'widgets/common_widgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
