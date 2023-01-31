@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_sticky_header/flutter_sticky_header.dart';
+
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:geocoder/geocoder.dart';
 import 'package:get/get.dart';
@@ -76,13 +77,27 @@ class _MyHomePageState extends State<MyHomePage> {
   initState() {
     super.initState();
 
-    if (maincontroller.isusermodelinitilize == false) {
-      maincontroller.getuserdata();
-    }
-    future = maincontroller.callfirebase();
+    // print("MYHomePage ::    maincontroller.isusermodelinitilize ${maincontroller.isusermodelinitilize}");
+    // if (maincontroller.isusermodelinitilize == false) {
+    //   maincontroller.getuserdata();
+    //   print("MYHomePage ::    maincontroller.isusermodelinitilize  after maincontroller.getuserdata() ${maincontroller.isusermodelinitilize}");
+    // }
+    // maincontroller.callfirebase();
+
+
+    getAdminDataAndService();
+    // future =
     first = getUserLocation();
   }
 
+  getAdminDataAndService() async {
+    if (maincontroller.isusermodelinitilize == false) {
+      print("MYHomePage ::    maincontroller.isusermodelinitilize  after maincontroller.getuserdata() ${maincontroller.isusermodelinitilize}");
+      await maincontroller.getuserdata();
+      print("MYHomePage ::    maincontroller.isusermodelinitilize  after maincontroller.getuserdata() ${maincontroller.isusermodelinitilize}");
+    }
+    maincontroller.callfirebase();
+  }
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -272,7 +287,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ),
               ),
-
             ],
           ),
         ),

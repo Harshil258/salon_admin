@@ -4,54 +4,67 @@
 
 import 'dart:convert';
 
-AdminModel usermodelFromJson(String str) => AdminModel.fromJson(json.decode(str));
+AdminModel usermodelFromJson(String str) =>
+    AdminModel.fromJson(json.decode(str));
 
 String usermodelToJson(AdminModel data) => json.encode(data.toJson());
 
 class AdminModel {
   AdminModel({
-    required this.aid,
-    required this.email,
-    required this.address,
-    required this.category,
-    required this.image,
-    required this.location,
-    required this.rating,
-    required this.salonid,
-    required this.salonname
+    this.aid,
+    this.email,
+    this.address,
+    this.category,
+    this.image,
+    this.location,
+    this.salonid,
+    this.salonname,
+    this.profileimage,
+    this.owner_name,
+    this.owner_surname,
+    this.owner_mobilenumber,
   });
 
-  String aid;
-  String email;
-  String address;
-  String category;
-  String image;
-  String location;
-  String rating;
-  String salonid;
-  String salonname;
+  String? aid;
+  String? email;
+  String? address;
+  String? category;
+  String? image;
+  String? location;
+  String? salonid;
+  String? salonname;
+  String? profileimage;
+  String? owner_name;
+  String? owner_surname;
+  String? owner_mobilenumber;
 
   factory AdminModel.fromJson(Map<String, dynamic> json) => AdminModel(
-    aid: json["aid"],
-    email: json["email"],
-    address: json["address"],
-    category: json["category"],
-    image: json["image"],
-    location: json["location"],
-    rating: json["rating"],
-    salonid: json["salonid"],
-    salonname: json["salonname"]
-  );
+        aid: json["aid"],
+        email: json["email"],
+        address: json["address"],
+        category: json["category"],
+        image: json["image"],
+        location: json["location"],
+        salonid: json["salonid"],
+        salonname: json["salonname"],
+        profileimage: json["profileimage"],
+        owner_name: json["owner_name"],
+        owner_surname: json["owner_surname"],
+        owner_mobilenumber: json["owner_mobilenumber"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "aid": aid,
-    "email": email,
-    "address": address,
-    "category": category,
-    "image": image,
-    "location": location,
-    "rating": rating,
-    "salonid": salonid,
-    "salonname": salonname
-  };
+        "aid": aid,
+        "email": email,
+        "address": address,
+        "category": category,
+        "image": image,
+        "location": location,
+        "salonid": salonid,
+        "salonname": salonname,
+        "profileimage": profileimage,
+        "owner_name": owner_name,
+        "owner_surname": owner_surname,
+        "owner_mobilenumber": owner_mobilenumber
+      };
 }

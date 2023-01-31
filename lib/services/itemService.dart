@@ -13,7 +13,9 @@ class ItemService {
   }
 
   Future<AdminModel> getuserdata() async {
-    return await firebaseService.getuserdata();
+    AdminModel model =await firebaseService.getuserdata();
+    print("AdminModel Admin : ${model.toJson().toString()}");
+    return model;
   }
 
 

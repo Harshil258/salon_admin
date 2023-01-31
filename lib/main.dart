@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:salon_admin/services/initclass.dart';
+import 'MyHomePage.dart';
 import 'home.dart';
 import 'login.dart';
 import 'themes.dart';
@@ -31,7 +32,7 @@ class _MyAppState extends State<MyApp> {
     Widget first;
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
-      first = Home();
+      first = MyHomePage();
     } else {
       first =  Register();
     }
@@ -52,7 +53,7 @@ class _MyAppState extends State<MyApp> {
       // home: first(),
       routes: {
         "/": (context) => first,
-        Routes.homedetail: (context) => Home(),
+        Routes.homedetail: (context) => const MyHomePage(),
         // Routes.register: (context) => Register(),
         // // Routes.Uploadphoto: (context) => Upload_Photo(),
       },

@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:get/get.dart';
+
 import 'home.dart';
 import 'themes.dart';
 import 'Register.dart';
 import 'widgets/common_widgets.dart';
-import 'package:page_transition/page_transition.dart';
+import 'MyHomePage.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -19,6 +21,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   bool changebutton = false;
   final _formKey = GlobalKey<FormState>();
+
   // var detailPagecontroller = Get.find<DetailPageController>();
   TextEditingController passwordTextController = TextEditingController();
   TextEditingController emailTextController = TextEditingController();
@@ -111,12 +114,12 @@ class _LoginPageState extends State<LoginPage> {
                                       .then((value) {
                                     Toasty.showtoast("Login Successful");
 
-                                    //  Get.toNamed(MyRoutes.getHomeRoute());
+                                    Get.to(MyHomePage());
 
-                                    Navigator.pushReplacement(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>  Home()));
+                                    // Navigator.pushReplacement(
+                                    //     context,
+                                    //     MaterialPageRoute(
+                                    //         builder: (context) =>  Home()));
                                   }).catchError((e) {
                                     Fluttertoast.showToast(msg: e!.message);
                                   });

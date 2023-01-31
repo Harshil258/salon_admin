@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:salon_admin/services/MainController.dart';
+import 'MyHomePage.dart';
 import 'login.dart';
 import 'themes.dart';
 import 'widgets/common_widgets.dart';
@@ -111,8 +112,7 @@ class _RegisterState extends State<Register> {
                                         passwordTextController.text);
                                   });
                                   await Future.delayed(Duration(seconds: 1));
-                                  // await Navigator.pushNamed(
-                                  //     context, Routes.homedetail);
+                                  Get.to(MyHomePage());
                                   setState(() {
                                     changebutton = false;
                                   });
@@ -251,22 +251,14 @@ class _RegisterState extends State<Register> {
       print("postDetailsToFirestore ::store ADMIN ${value}");
       if (value == "Admin Stored") {
         await maincontroller
-            .storeSaloon(
-                user!.uid, user.email.toString(), "", "", "", "", "", "")
+            .storeSaloon(user!.uid, user.email.toString(), "", "", "", "", "",
+                "", "", "", "", "")
             .then((value) async {
           print("postDetailsToFirestore ::store Salon ${value}");
         });
       }
     });
 
-    // AdminModel adminModel = AdminModel();
-    // adminModel.email = user.email;
-    // adminModel.aid = user.uid;
-    //
-    // await firebaseFirestore
-    //     .collection("Admin")
-    //     .doc(user.uid)
-    //     .set(adminModel.toMap());
     Fluttertoast.showToast(msg: "Account created successfully : ");
 
     Navigator.pushAndRemoveUntil((context),

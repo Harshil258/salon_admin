@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:salon_admin/services/MainController.dart';
 import 'package:salon_admin/services/auth.dart';
+import 'package:salon_admin/signup_process.dart';
 import 'package:salon_admin/themes.dart';
 
 class Profile extends StatefulWidget {
@@ -29,7 +30,7 @@ class _ProfileState extends State<Profile> {
       body: Container(
         child: Stack(
           children: [
-            maincontroller.modelforintent!.photo.trim().isEmpty
+            maincontroller.modelforintent!.profileimage!.trim().isEmpty
                 ? SvgPicture.asset(
                     "assets/male.svg",
                     width: double.infinity,
@@ -37,7 +38,7 @@ class _ProfileState extends State<Profile> {
                     fit: BoxFit.contain,
                   )
                 : CachedNetworkImage(
-                    imageUrl: "${maincontroller.modelforintent!.photo}",
+                    imageUrl: "${maincontroller.modelforintent!.profileimage}",
                     placeholder: (context, url) => CircularProgressIndicator(),
                     errorWidget: (context, url, error) => Icon(Icons.error),
                     width: double.infinity,
@@ -74,19 +75,16 @@ class _ProfileState extends State<Profile> {
                                           22, 0, 22, 0),
                                       child: TextFormField(
                                         cursorColor: MyThemes.txtwhite,
-                                        initialValue: (maincontroller
-                                                        .modelforintent!.name +
-                                                    " " +
-                                                    maincontroller
+                                        initialValue: ("${maincontroller
                                                         .modelforintent!
-                                                        .surname)
+                                                        .owner_name} ${maincontroller
+                                                        .modelforintent!
+                                                        .owner_surname}")
                                                 .trim()
                                                 .isNotEmpty
-                                            ? maincontroller
-                                                    .modelforintent!.name +
-                                                " " +
-                                                maincontroller
-                                                    .modelforintent!.surname
+                                            ? "${maincontroller.modelforintent!
+                                                    .owner_name} ${maincontroller.modelforintent!
+                                                    .owner_surname}"
                                             : "Name and Surname is not set",
                                         autofocus: false,
                                         readOnly: editable,
@@ -104,11 +102,7 @@ class _ProfileState extends State<Profile> {
                                         "assets/Edit Icon.svg"),
                                   ),
                                   onTap: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                Signup_process()));
+                                    Get.to(Signup_process());
                                   },
                                 )
                               ],
@@ -116,8 +110,8 @@ class _ProfileState extends State<Profile> {
                             Padding(
                               padding: const EdgeInsets.fromLTRB(22, 0, 22, 0),
                               child: Text(
-                                maincontroller.modelforintent!.email.isNotEmpty
-                                    ? maincontroller.modelforintent!.email
+                                maincontroller.modelforintent!.email!.isNotEmpty
+                                    ? maincontroller.modelforintent!.email.toString()
                                     : "Please Set Email",
                                 style: TextStyle(
                                     color: MyThemes.txtdarkwhite, fontSize: 14),
@@ -127,9 +121,9 @@ class _ProfileState extends State<Profile> {
                               padding: const EdgeInsets.fromLTRB(22, 0, 22, 0),
                               child: Text(
                                 maincontroller
-                                        .modelforintent!.mobilenumber.isNotEmpty
+                                        .modelforintent!.owner_mobilenumber!.isNotEmpty
                                     ? maincontroller
-                                        .modelforintent!.mobilenumber
+                                        .modelforintent!.owner_mobilenumber.toString()
                                     : "Please set mobile number",
                                 style: TextStyle(
                                     color: MyThemes.txtdarkwhite, fontSize: 14),
@@ -139,8 +133,8 @@ class _ProfileState extends State<Profile> {
                               padding: const EdgeInsets.fromLTRB(22, 0, 22, 0),
                               child: Text(
                                 maincontroller
-                                        .modelforintent!.address.isNotEmpty
-                                    ? maincontroller.modelforintent!.address
+                                        .modelforintent!.address!.isNotEmpty
+                                    ? maincontroller.modelforintent!.address.toString()
                                     : "Please set Adderess",
                                 style: TextStyle(
                                     color: MyThemes.txtdarkwhite, fontSize: 14),
