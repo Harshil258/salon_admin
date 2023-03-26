@@ -2,21 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:salon_admin/services/initclass.dart';
-import 'MyHomePage.dart';
-import 'home.dart';
-import 'login.dart';
-import 'themes.dart';
+import 'package:salon_admin/util/routes.dart';
+import 'Screens/Home_Screen.dart';
+import 'Screens/Home_Screen.dart';
+import 'Screens/Login_Screen.dart';
+import 'MyThemes.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'util/routes.dart';
-import 'Register.dart';
 
-void main() async{
-   WidgetsFlutterBinding.ensureInitialized();
-   await Firebase.initializeApp();
-   await init();
+import 'Screens/Register_Screen.dart';
 
-   runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  await init();
+
+  runApp(const MyApp());
 }
 
 class MyApp extends StatefulWidget {
@@ -32,9 +33,9 @@ class _MyAppState extends State<MyApp> {
     Widget first;
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
-      first = MyHomePage();
+      first = Home_Screen();
     } else {
-      first =  Register();
+      first = Register_Screen();
     }
 
     return GetMaterialApp(
@@ -53,7 +54,7 @@ class _MyAppState extends State<MyApp> {
       // home: first(),
       routes: {
         "/": (context) => first,
-        Routes.homedetail: (context) => const MyHomePage(),
+        Routes.homedetail: (context) => const Home_Screen(),
         // Routes.register: (context) => Register(),
         // // Routes.Uploadphoto: (context) => Upload_Photo(),
       },

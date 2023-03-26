@@ -1,7 +1,9 @@
+import 'dart:io';
+
 import 'package:image_picker/image_picker.dart';
 
 import '../models/AdminModel.dart';
-import '../models/servicemodel.dart';
+import '../models/ServiceModel.dart';
 import 'FirebaseService.dart';
 
 class ItemService {
@@ -18,14 +20,14 @@ class ItemService {
     return model;
   }
 
-
-  Future<String?> loadUser(String userid, String name, String surname,
-      String email, String phoneno, String address, String photo) async {
-    return await firebaseService.storeData(
-        userid, name, surname, email, phoneno, address, photo);
-  }
-
-  Future<String?> uploadImage(PickedFile file,String name) async {
+  Future<String?> uploadImage(File file,String name) async {
     return await firebaseService.uploadImage(file,name);
   }
+
+  Future<String?> uploadServiceImage(File file,String name) async {
+    return await firebaseService.uploadServiceImage(file,name);
+  }
+
+
+
 }

@@ -3,7 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-import '../login.dart';
+import '../Screens/Login_Screen.dart';
 
 
 class Authentication {
@@ -44,11 +44,13 @@ class Authentication {
     final GoogleSignIn googleSignIn = GoogleSignIn();
 
     final GoogleSignInAccount? googleSignInAccount =
-        await googleSignIn.signIn();
+    await googleSignIn.signIn();
+
+    String _googleUserEmail = googleSignInAccount!.email;
 
     if (googleSignInAccount != null) {
       final GoogleSignInAuthentication googleSignInAuthentication =
-          await googleSignInAccount.authentication;
+      await googleSignInAccount.authentication;
 
       final AuthCredential credential = GoogleAuthProvider.credential(
         accessToken: googleSignInAuthentication.accessToken,
@@ -57,15 +59,18 @@ class Authentication {
 
       try {
         final UserCredential userCredential =
-            await auth.signInWithCredential(credential);
+        await auth.signInWithCredential(credential);
+        userCredential.user!.updateEmail(_googleUserEmail);
 
         user = userCredential.user;
+
+        print("here is main user email:: ${user!.email}");
       } on FirebaseAuthException catch (e) {
         if (e.code == 'account-exists-with-different-credential') {
           ScaffoldMessenger.of(context).showSnackBar(
             Authentication.customSnackBar(
               content:
-                  'The account already exists with a different credential.',
+              'The account already exists with a different credential.',
             ),
           );
         } else if (e.code == 'invalid-credential') {
@@ -104,7 +109,7 @@ class Authentication {
       await googleSignIn.signOut();
       await FirebaseAuth.instance.signOut();
       Navigator.push(
-          context, MaterialPageRoute(builder: (context) => LoginPage()));
+          context, MaterialPageRoute(builder: (context) => Login_Screen()));
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         Authentication.customSnackBar(

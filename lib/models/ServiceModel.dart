@@ -12,14 +12,31 @@ ServiceModel serviceModelFromJson(String str) =>
 String serviceModelToJson(ServiceModel data) => json.encode(data.toJson());
 
 ServiceModel fromQuerySnapshotService(snapshot) {
-  print("converting data to ServiceModel :: ${snapshot.data()['Title'].toString()}");
+  print(
+      "converting data to ServiceModel :: ${snapshot.data()['Title'].toString()}");
   return ServiceModel(
-      title: snapshot.data()['Title'].toString() == "null" ? "" : snapshot.data()['Title'],
-      description: snapshot.data()['description'].toString() == "null" ? "" : snapshot.data()['description'],
-      price: snapshot.data()['Price'].toString() == "null" ? 0 : snapshot.data()['Price'],
-      image: snapshot.data()['image'].toString() == "null" ? "" : snapshot.data()['image'],
-      salonId: snapshot.data()['salon_id'].toString() == "null" ? "" : snapshot.data()['salon_id'],
-      serviceId: snapshot.data()['service_id'].toString() == "null" ? "" : snapshot.data()['service_id']);
+    title: snapshot.data()['Title'].toString() == "null"
+        ? ""
+        : snapshot.data()['Title'],
+    description: snapshot.data()['description'].toString() == "null"
+        ? ""
+        : snapshot.data()['description'],
+    price: snapshot.data()['Price'].toString() == "null"
+        ? 0
+        : snapshot.data()['Price'],
+    image: snapshot.data()['image'].toString() == "null"
+        ? ""
+        : snapshot.data()['image'],
+    salonId: snapshot.data()['salon_id'].toString() == "null"
+        ? ""
+        : snapshot.data()['salon_id'],
+    serviceId: snapshot.data()['service_id'].toString() == "null"
+        ? ""
+        : snapshot.data()['service_id'],
+    service_gender: snapshot.data()['gender'].toString() == "null"
+        ? ""
+        : snapshot.data()['gender'],
+  );
 }
 
 class ServiceModel {
@@ -30,6 +47,7 @@ class ServiceModel {
     required this.image,
     required this.salonId,
     required this.serviceId,
+    required this.service_gender,
   });
 
   String title;
@@ -38,6 +56,7 @@ class ServiceModel {
   String image;
   String salonId;
   String serviceId;
+  String service_gender;
 
   factory ServiceModel.fromJson(Map<String, dynamic> json) => ServiceModel(
         title: json["Title"],
@@ -46,6 +65,7 @@ class ServiceModel {
         image: json["image"],
         salonId: json["salon_id"],
         serviceId: json["service_id"],
+        service_gender: json["gender"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -55,5 +75,6 @@ class ServiceModel {
         "image": image,
         "salon_id": salonId,
         "service_id": serviceId,
+        "gender": service_gender,
       };
 }

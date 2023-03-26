@@ -19,7 +19,7 @@ class AdminModel {
     this.location,
     this.salonid,
     this.salonname,
-    this.profileimage,
+    this.saloonimage,
     this.owner_name,
     this.owner_surname,
     this.owner_mobilenumber,
@@ -33,7 +33,7 @@ class AdminModel {
   String? location;
   String? salonid;
   String? salonname;
-  String? profileimage;
+  String? saloonimage;
   String? owner_name;
   String? owner_surname;
   String? owner_mobilenumber;
@@ -47,7 +47,7 @@ class AdminModel {
         location: json["location"],
         salonid: json["salonid"],
         salonname: json["salonname"],
-        profileimage: json["profileimage"],
+        saloonimage: json["saloonimage"],
         owner_name: json["owner_name"],
         owner_surname: json["owner_surname"],
         owner_mobilenumber: json["owner_mobilenumber"],
@@ -62,7 +62,7 @@ class AdminModel {
         "location": location,
         "salonid": salonid,
         "salonname": salonname,
-        "profileimage": profileimage,
+        "saloonimage": saloonimage,
         "owner_name": owner_name,
         "owner_surname": owner_surname,
         "owner_mobilenumber": owner_mobilenumber

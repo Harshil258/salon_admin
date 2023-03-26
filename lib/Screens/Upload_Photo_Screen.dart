@@ -2,14 +2,28 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:salon_admin/services/MainController.dart';
 
-import '../themes.dart';
-import 'Upload_photo_preview.dart';
+import '../../MyThemes.dart';
+import 'Upload_Photo_Preview_Screen.dart';
 
-class Upload_Photo extends StatelessWidget {
-  const Upload_Photo({Key? key}) : super(key: key);
+class Upload_Photo_Preview_Screen extends StatefulWidget {
+  const Upload_Photo_Preview_Screen({Key? key}) : super(key: key);
+
+  @override
+  State<Upload_Photo_Preview_Screen> createState() => _Upload_Photo_Preview_ScreenState();
+}
+
+class _Upload_Photo_Preview_ScreenState extends State<Upload_Photo_Preview_Screen> {
+  @override
+  void initState() {
+    print(
+        "aid aid Upload_Photo = ${Get.find<MainController>().modelforintent!.aid}");
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +44,7 @@ class Upload_Photo extends StatelessWidget {
                           "assets/backpurple.svg",
                         ),
                       ),
-                      onTap: (){
+                      onTap: () {
                         Navigator.pop(context);
                       },
                     ),
@@ -93,8 +107,7 @@ class Upload_Photo extends StatelessWidget {
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) =>
-                                          Upload_Photo_preview(
-                                              image, file, "")));
+                                          Upload_Photo_preview(file, "")));
                             }
                           }
                         },
@@ -117,9 +130,6 @@ class Upload_Photo extends StatelessWidget {
                       padding: const EdgeInsets.fromLTRB(22, 0, 22, 10),
                       child: InkWell(
                         onTap: () async {
-                          /*   final _imagePicker = ImagePicker();
-                          PickedFile? image;
-                          image = await _imagePicker.getImage(source: ImageSource.gallery);*/
                           await Permission.photos.request();
                           var permissionStatus = await Permission.photos.status;
                           if (permissionStatus.isGranted) {
@@ -132,8 +142,7 @@ class Upload_Photo extends StatelessWidget {
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) =>
-                                          Upload_Photo_preview(
-                                              image, file, "")));
+                                          Upload_Photo_preview(file, "")));
                             }
                           }
                         },

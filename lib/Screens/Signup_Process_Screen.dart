@@ -5,30 +5,31 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:salon_admin/services/MainController.dart';
 
-import '../themes.dart';
-import 'Upload_photo.dart';
-import 'Upload_photo_preview.dart';
-import 'common_widgets.dart';
-import 'models/AdminModel.dart';
+import '../../MyThemes.dart';
+import '../widgets/common_widgets.dart';
+import 'Upload_Photo_Screen.dart';
+import 'Upload_Photo_Preview_Screen.dart';
+import '../models/AdminModel.dart';
 
-class Signup_process extends StatefulWidget {
-  const Signup_process({Key? key}) : super(key: key);
+class Signup_Process_Screen extends StatefulWidget {
+  const Signup_Process_Screen({Key? key}) : super(key: key);
 
   @override
-  State<Signup_process> createState() => _Signup_processState();
+  State<Signup_Process_Screen> createState() => _Signup_Process_ScreenState();
 }
 
-class _Signup_processState extends State<Signup_process> {
-  @override
-  Widget build(BuildContext context) {
-    TextEditingController firstname = new TextEditingController();
-    TextEditingController surname = new TextEditingController();
-    TextEditingController mobile = new TextEditingController();
-    TextEditingController address = new TextEditingController();
-    TextEditingController salonname = new TextEditingController();
-    String category = "Male";
+class _Signup_Process_ScreenState extends State<Signup_Process_Screen> {
+  late String category;
+  TextEditingController firstname = new TextEditingController();
+  TextEditingController surname = new TextEditingController();
+  TextEditingController mobile = new TextEditingController();
+  TextEditingController address = new TextEditingController();
+  TextEditingController salonname = new TextEditingController();
+  var maincontroller = Get.find<MainController>();
 
-    var maincontroller = Get.find<MainController>();
+  @override
+  void initState() {
+    category = "Male";
 
     try {
       if (maincontroller.isusermodelinitilize) {
@@ -39,7 +40,10 @@ class _Signup_processState extends State<Signup_process> {
         salonname.text = "${maincontroller.modelforintent!.salonname}";
       }
     } on Exception catch (e) {}
+  }
 
+  @override
+  Widget build(BuildContext context) {
     final _formKeysignupprocess = GlobalKey<FormState>();
 
     bool loading = false;
@@ -57,7 +61,7 @@ class _Signup_processState extends State<Signup_process> {
                     Padding(
                       padding: const EdgeInsets.all(22.0),
                       child: SvgPicture.asset(
-                        "assets/backorange.svg",
+                        "assets/backpurple.svg",
                       ),
                     ),
                     Padding(
@@ -293,22 +297,59 @@ class _Signup_processState extends State<Signup_process> {
                     SizedBox(
                       height: 10,
                     ),
-                    DropdownButton<String>(
-                      items: <String>['Male', 'Female', 'All'].map((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                      onChanged: (value) {
-                        category = value!;
-                      },
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+                      child: Card(
+                        clipBehavior: Clip.antiAlias,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8)),
+                        color: MyThemes.lightblack,
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+                          child: Theme(
+                            data: ThemeData(
+                                primaryColor: Colors.white,
+                                accentColor: Colors.white,
+                                hintColor: Colors.white),
+                            child: DropdownButton<String>(
+                              isExpanded: true,
+                              value: category,
+                              dropdownColor: MyThemes.lightblack,
+                              items: <String>['Male', 'Female', 'All']
+                                  .map((String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(
+                                    value,
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        backgroundColor: MyThemes.lightblack),
+                                  ),
+                                );
+                              }).toList(),
+                              onChanged: (value) {
+                                print("category value ${category}");
+                                setState(() {
+                                  category = value!;
+                                });
+                              },
+                              icon: Icon(Icons.arrow_drop_down),
+                              style: TextStyle(color: Colors.white),
+                              underline: SizedBox(),
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
                     SizedBox(
                       height: 100,
                     ),
                     loading
-                        ? CircularProgressIndicator()
+                        ? Center(
+                      child: CircularProgressIndicator(
+                        color: MyThemes.purple,
+                      ),
+                    )
                         : Align(
                             alignment: Alignment.bottomCenter,
                             child: InkWell(
@@ -328,12 +369,14 @@ class _Signup_processState extends State<Signup_process> {
                                             "${maincontroller.modelforintent!.aid}",
                                         owner_name: "${firstname.text}",
                                         owner_surname: "${surname.text}",
+                                        salonname: "${salonname.text}",
                                         email:
                                             "${maincontroller.modelforintent!.email}",
                                         owner_mobilenumber: "${mobile.text}",
                                         address: "${address.text}",
-                                        profileimage:
-                                            "${maincontroller.modelforintent!.profileimage}");
+                                        saloonimage:
+                                            "${maincontroller.modelforintent!.saloonimage}",
+                                        category: category);
 
                                     Navigator.push(
                                         context,
@@ -341,29 +384,28 @@ class _Signup_processState extends State<Signup_process> {
                                             builder: (context) =>
                                                 Upload_Photo_preview(
                                                     null,
-                                                    null,
                                                     maincontroller
                                                         .modelforintent!
-                                                        .profileimage)));
+                                                        .saloonimage)));
                                   } else {
                                     // when new user
-                                    maincontroller.modelforintent =
-                                        new AdminModel(
-                                            aid: "",
-                                            owner_name: firstname.text,
-                                            owner_surname: surname.text,
-                                            email: "",
-                                            owner_mobilenumber: mobile.text,
-                                            address: address.text,
-                                            profileimage: "",
-                                            salonname: salonname.text,
-                                            category: category);
+                                    maincontroller.modelforintent = new AdminModel(
+                                        aid: maincontroller.modelforintent!.aid,
+                                        owner_name: firstname.text,
+                                        owner_surname: surname.text,
+                                        email:
+                                            "${maincontroller.modelforintent!.email}",
+                                        owner_mobilenumber: mobile.text,
+                                        address: address.text,
+                                        saloonimage: "",
+                                        salonname: salonname.text,
+                                        category: category);
 
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
-                                                Upload_Photo()));
+                                                Upload_Photo_Preview_Screen()));
                                   }
                                 }
                               },

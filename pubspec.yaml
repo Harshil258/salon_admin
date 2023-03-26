@@ -59,6 +59,11 @@ dependencies:
   geolocator: ^9.0.1
   geocoder: ^0.2.1
 
+
+  cell_calendar: ^0.7.0
+
+
+
   location: ^4.2.0
   flutter_launcher_icons: ^0.10.0
 

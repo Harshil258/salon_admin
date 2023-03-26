@@ -1,15 +1,19 @@
 // import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
-// import 'package:my_saloon/models/servicemodel.dart';
+import 'package:readmore/readmore.dart';
+
+// import 'package:my_saloon/models/ServiceModel.dart';
 // import 'package:readmore/readmore.dart';
 
-import '../login.dart';
-import '../themes.dart';
+import '../Screens/Login_Screen.dart';
+import '../MyThemes.dart';
 import '../util/routes.dart';
+
 class Toasty {
   static showtoast(String message) {
     Fluttertoast.showToast(
@@ -44,6 +48,7 @@ class CustomTextField extends StatefulWidget {
 
 class _CustomTextFieldState extends State<CustomTextField> {
   bool defaultshow = false;
+
   // TextEditingController = controller;
   // var controller;
 
@@ -113,7 +118,6 @@ class _CustomTextFieldState extends State<CustomTextField> {
   }
 }
 
-
 class MyDrawer extends StatelessWidget {
   MyDrawer({Key? key}) : super(key: key);
 
@@ -126,16 +130,15 @@ class MyDrawer extends StatelessWidget {
         children: [
           DrawerHeader(
             decoration: BoxDecoration(
-              borderRadius: const BorderRadius.only(
-                  //bottomRight: Radius.circular(20),
-                  //bottomLeft: Radius.circular(20)),),
-                  ),
-              color: MyThemes.darkblack
-            ),
+                borderRadius: const BorderRadius.only(
+                    //bottomRight: Radius.circular(20),
+                    //bottomLeft: Radius.circular(20)),),
+                    ),
+                color: MyThemes.darkblack),
             child: const Center(
               child: Text(
                 ' Harsh il',
-              //   style: kTextStyleBoldBlack(24),
+                //   style: kTextStyleBoldBlack(24),
               ),
             ),
           ),
@@ -146,11 +149,10 @@ class MyDrawer extends StatelessWidget {
               children: [
                 DrawerItem(
                   icon: Icons.home,
-                  
                   label: 'Home',
                   onPressed: () => Get.back(),
                 ),
-              //  kVerticalSpace(16),
+                //  kVerticalSpace(16),
                 // Spacer(),
                 Padding(
                   padding: const EdgeInsets.only(top: 478),
@@ -164,13 +166,16 @@ class MyDrawer extends StatelessWidget {
                           showDialog(
                               context: context,
                               builder: (context) {
-                                return const Center(
-                                    child: CircularProgressIndicator());
+                                return Center(
+                                  child: CircularProgressIndicator(
+                                    color: MyThemes.purple,
+                                  ),
+                                );
                               });
                           Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => LoginPage()));
+                                  builder: (context) => Login_Screen()));
                         });
                       },
                       child: Row(
@@ -195,6 +200,7 @@ class MyDrawer extends StatelessWidget {
     );
   }
 }
+
 class DrawerItem extends StatelessWidget {
   const DrawerItem({
     Key? key,
@@ -214,7 +220,10 @@ class DrawerItem extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Icon(icon, color: MyThemes.darkblack,),
+          Icon(
+            icon,
+            color: MyThemes.darkblack,
+          ),
           const SizedBox(width: 10),
           Text(
             label,
@@ -226,277 +235,117 @@ class DrawerItem extends StatelessWidget {
   }
 }
 
+class custom_item_view extends StatefulWidget {
+  const custom_item_view(
+      {Key? key,
+      required this.Name,
+      required this.Price,
+      this.Description,
+      this.imagelink})
+      : super(key: key);
 
+  final String Name;
+  final int Price;
+  final String? Description;
+  final String? imagelink;
 
+  @override
+  State<custom_item_view> createState() => _custom_item_viewState();
+}
 
-
-
-// class Horizontal_listview_item extends StatefulWidget {
-//   const Horizontal_listview_item(this.imageurl, this.title, {Key? key})
-//       : super(key: key);
-
-//   final String imageurl;
-//   final String title;
-
-//   @override
-//   State<Horizontal_listview_item> createState() =>
-//       _Horizontal_listview_itemState();
-// }
-
-// class _Horizontal_listview_itemState extends State<Horizontal_listview_item> {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Padding(
-//       padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
-//       child: Container(
-//         // color: Colors.deepPurple,
-//         width: 100,
-//         child: Column(
-//           crossAxisAlignment: CrossAxisAlignment.center,
-//           children: [
-//             ClipRRect(
-//               borderRadius: BorderRadius.circular(5),
-//               child: CachedNetworkImage(
-//                 imageUrl: "${widget.imageurl}",
-//                 placeholder: (context, url) =>
-//                     CircularProgressIndicator(color: MyThemes.purple),
-//                 errorWidget: (context, url, error) => Icon(Icons.error),
-//                 fit: BoxFit.cover,
-//                 height: 145,
-//                 width: 110,
-//               ),
-//             ),
-//             Padding(
-//               padding: const EdgeInsets.all(3.0),
-//               child: Text(
-//                 widget.title,
-//                 textAlign: TextAlign.center,
-//                 style: TextStyle(fontSize: 13, overflow: TextOverflow.ellipsis),
-//               ),
-//             )
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
-
-// class Vertical_listview_item extends StatefulWidget {
-//   const Vertical_listview_item(
-//       {Key? key,
-//       required this.image,
-//       required this.title,
-//       required this.rating,
-//       required this.address})
-//       : super(key: key);
-
-//   final String image;
-//   final String title;
-//   final String rating;
-//   final String address;
-
-//   @override
-//   State<Vertical_listview_item> createState() => _Vertical_listview_itemState();
-// }
-
-// class _Vertical_listview_itemState extends State<Vertical_listview_item> {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       child: Row(
-//         children: [
-//           ClipRRect(
-//             borderRadius: BorderRadius.circular(5),
-//             child: Image.network(
-//               widget.image,
-//               fit: BoxFit.cover,
-//               height: 145,
-//               width: 110,
-//             ),
-//           ),
-//           Expanded(
-//             child: Padding(
-//               padding: const EdgeInsets.all(8.0),
-//               child: Column(
-//                 children: [
-//                   Text(
-//                     widget.title,
-//                     textAlign: TextAlign.center,
-//                     maxLines: 2,
-//                     style: TextStyle(
-//                         fontSize: 16, overflow: TextOverflow.ellipsis),
-//                   ),
-//                   Row(
-//                     mainAxisAlignment: MainAxisAlignment.center,
-//                     children: [
-//                       Icon(
-//                         CupertinoIcons.star_circle,
-//                         color: MyThemes.purple,
-//                         size: 20.0,
-//                       ),
-//                       SizedBox(
-//                         width: 5,
-//                       ),
-//                       Text(
-//                         widget.rating,
-//                         textAlign: TextAlign.center,
-//                         maxLines: 3,
-//                         style: TextStyle(
-//                             fontSize: 13, overflow: TextOverflow.ellipsis),
-//                       ),
-//                     ],
-//                   ),
-//                   Text(
-//                     widget.address,
-//                     textAlign: TextAlign.center,
-//                     maxLines: 3,
-//                     style: TextStyle(
-//                         fontSize: 13, overflow: TextOverflow.ellipsis),
-//                   )
-//                 ],
-//               ),
-//             ),
-//           )
-//         ],
-//       ),
-//     );
-//   }
-// }
-
-// class custom_item_view extends StatefulWidget {
-//   const custom_item_view(
-//       {Key? key,
-//       required this.Name,
-//       required this.Price,
-//       this.Description,
-//       this.imagelink,
-//       required this.addedOrNot,
-//       this.onTapOnAddCart})
-//       : super(key: key);
-
-//   final String Name;
-//   final int Price;
-//   final String? Description;
-//   final String? imagelink;
-//   final bool addedOrNot;
-//   final GestureTapCallback? onTapOnAddCart;
-
-//   @override
-//   State<custom_item_view> createState() => _custom_item_viewState();
-// }
-
-// class _custom_item_viewState extends State<custom_item_view> {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       child: Row(
-//         children: [
-//           Expanded(
-//             child: Padding(
-//               padding: const EdgeInsets.all(8.0),
-//               child: Column(
-//                 crossAxisAlignment: CrossAxisAlignment.start,
-//                 children: [
-//                   Text(
-//                     "${widget.Name}",
-//                     textAlign: TextAlign.center,
-//                     maxLines: 2,
-//                     style: TextStyle(
-//                         fontSize: 16,
-//                         overflow: TextOverflow.ellipsis,
-//                         color: MyThemes.txtwhite),
-//                   ),
-//                   SizedBox(height: 2),
-//                   Text(
-//                     "${widget.Price} ₹",
-//                     textAlign: TextAlign.center,
-//                     maxLines: 3,
-//                     style: TextStyle(
-//                         fontSize: 16,
-//                         overflow: TextOverflow.ellipsis,
-//                         color: MyThemes.txtwhite),
-//                   ),
-//                   SizedBox(height: 2),
-//                   widget.Description!.isNotEmpty
-//                       ? ReadMoreText(
-//                           "${widget.Description}",
-//                           textAlign: TextAlign.start,
-//                           trimLines: 2,
-//                           colorClickableText: MyThemes.purple,
-//                           trimMode: TrimMode.Line,
-//                           trimCollapsedText: ' Show more',
-//                           trimExpandedText: ' Show less',
-//                           style: TextStyle(
-//                               fontSize: 13,
-//                               overflow: TextOverflow.ellipsis,
-//                               color: MyThemes.txtdarkwhite),
-//                         )
-//                       : SizedBox()
-//                 ],
-//               ),
-//             ),
-//           ),
-//           Stack(
-//             children: [
-//               widget.imagelink!.isNotEmpty
-//                   ? ClipRRect(
-//                       borderRadius: BorderRadius.circular(5),
-//                       child: CachedNetworkImage(
-//                         imageUrl: "${widget.imagelink}",
-//                         placeholder: (context, url) =>
-//                             CircularProgressIndicator(),
-//                         errorWidget: (context, url, error) => Icon(Icons.error),
-//                         height: 120,
-//                         width: 110,
-//                         fit: BoxFit.cover,
-//                       ),
-//                     )
-//                   : SizedBox(
-//                       height: 50,
-//                       width: 110,
-//                     ),
-//               Positioned(
-//                 bottom: -5.0,
-//                 right: 0.0,
-//                 left: 0.0,
-//                 child: Container(
-//                   child: Center(
-//                     child: Padding(
-//                       padding: const EdgeInsets.fromLTRB(3, 0, 3, 0),
-//                       child: ElevatedButton(
-//                         style: ElevatedButton.styleFrom(
-//                             alignment: Alignment.center,
-//                             padding: EdgeInsets.all(0.0)),
-//                         onPressed: widget.onTapOnAddCart,
-//                         child: Row(
-//                           mainAxisAlignment: MainAxisAlignment.center,
-//                           children: [
-//                             widget.addedOrNot
-//                                 ? Icon(CupertinoIcons.minus)
-//                                 : Icon(CupertinoIcons.add),
-//                             widget.addedOrNot
-//                                 ? Text(
-//                                     "REMOVE",
-//                                     overflow: TextOverflow.ellipsis,
-//                                     textAlign: TextAlign.center,
-//                                   )
-//                                 : Text("ADD",
-//                                     overflow: TextOverflow.ellipsis,
-//                                     textAlign: TextAlign.center)
-//                           ],
-//                         ),
-//                       ),
-//                     ),
-//                   ),
-//                 ),
-//               )
-//             ],
-//           )
-//         ],
-//       ),
-//     );
-//   }
-// }
+class _custom_item_viewState extends State<custom_item_view> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+          border: Border.all(
+            color: MyThemes.lightblack,
+            width: 2
+          ),
+          borderRadius: BorderRadius.all(Radius.circular(20))),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          children: [
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "${widget.Name}",
+                      textAlign: TextAlign.center,
+                      maxLines: 2,
+                      style: TextStyle(
+                          fontSize: 16,
+                          overflow: TextOverflow.ellipsis,
+                          color: MyThemes.txtwhite),
+                    ),
+                    SizedBox(height: 2),
+                    Text(
+                      "${widget.Price} ₹",
+                      textAlign: TextAlign.center,
+                      maxLines: 3,
+                      style: TextStyle(
+                          fontSize: 16,
+                          overflow: TextOverflow.ellipsis,
+                          color: MyThemes.txtwhite),
+                    ),
+                    SizedBox(height: 2),
+                    widget.Description!.isNotEmpty
+                        ? ReadMoreText(
+                            "${widget.Description}",
+                            textAlign: TextAlign.start,
+                            trimLines: 2,
+                            colorClickableText: MyThemes.purple,
+                            trimMode: TrimMode.Line,
+                            trimCollapsedText: ' Show more',
+                            trimExpandedText: ' Show less',
+                            style: TextStyle(
+                                fontSize: 13,
+                                overflow: TextOverflow.ellipsis,
+                                color: MyThemes.txtdarkwhite),
+                          )
+                        : SizedBox()
+                  ],
+                ),
+              ),
+            ),
+            Stack(
+              children: [
+                widget.imagelink!.isNotEmpty
+                    ? ClipRRect(
+                        borderRadius: BorderRadius.circular(5),
+                        child: CachedNetworkImage(
+                          imageUrl: "${widget.imagelink}",
+                          placeholder: (context, url) => Center(
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  MyThemes.purple,
+                                ),
+                              ),
+                            )
+                          ),
+                          errorWidget: (context, url, error) => Icon(Icons.error),
+                          height: 120,
+                          width: 110,
+                          fit: BoxFit.cover,
+                        ),
+                      )
+                    : SizedBox(
+                        height: 50,
+                        width: 110,
+                      ),
+              ],
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
 
 // class Final_cart extends StatefulWidget {
 //   const Final_cart(
@@ -580,30 +429,30 @@ class DrawerItem extends StatelessWidget {
 //   }
 // }
 
-// class Common_Widget extends StatelessWidget {
-//   const Common_Widget(this.name, {Key? key}) : super(key: key);
+class Common_Widget extends StatelessWidget {
+  const Common_Widget(this.name, {Key? key}) : super(key: key);
 
-//   final String name;
+  final String name;
 
-//   @override
-//   Widget build(BuildContext context) {
-//     return Padding(
-//       padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
-//       child: Card(
-//         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-//         color: MyThemes.purple,
-//         child: Container(
-//           width: 130,
-//           height: 40,
-//           child: Center(
-//             child: Text(
-//               name,
-//               style: TextStyle(
-//                   color: MyThemes.txtwhite, fontWeight: FontWeight.bold),
-//             ),
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
+      child: Card(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        color: MyThemes.purple,
+        child: Container(
+          width: 130,
+          height: 40,
+          child: Center(
+            child: Text(
+              name,
+              style: TextStyle(
+                  color: MyThemes.txtwhite, fontWeight: FontWeight.bold),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}

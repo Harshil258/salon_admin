@@ -8,29 +8,23 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../models/servicemodel.dart';
+import '../models/ServiceModel.dart';
 import '../models/AdminModel.dart';
 import 'auth.dart';
 
 class FirebaseService {
-
   Future<AdminModel> getuserdata() async {
     User? user = await Authentication.getUserId();
-    // final CollectionReference collection =
-    //     FirebaseFirestore.instance.collection('Admin');
-    // DocumentSnapshot<Object?> model = await collection.doc(user!.uid).get();
 
     final CollectionReference collection =
         FirebaseFirestore.instance.collection('salons');
     DocumentSnapshot<Object?> model = await collection.doc(user!.uid).get();
 
-
-
     print("Current Admin : ${user!.uid}");
     print("Current Admin : ${model.data().toString()}");
     if (model.data().isNull) {
       return AdminModel(
-        aid: "",
+        aid: user!.uid,
         email: "",
         address: "",
         category: "",
@@ -38,22 +32,22 @@ class FirebaseService {
         location: "",
         salonid: "",
         salonname: "",
-        profileimage: "",
+        saloonimage: "",
         owner_name: "",
         owner_surname: "",
         owner_mobilenumber: "",
       );
     } else {
       return AdminModel(
-        aid: model.get("aid"),
-        email: model.get("email"),
+        aid: user!.uid,
+        email: user.email,
         address: model.get("address"),
         category: model.get("category"),
         image: model.get("image"),
         location: model.get("location"),
         salonid: model.get("salon_id"),
         salonname: model.get("salon_name"),
-        profileimage: model.get("profileimage"),
+        saloonimage: model.get("saloonimage"),
         owner_name: model.get("owner_name"),
         owner_surname: model.get("owner_surname"),
         owner_mobilenumber: model.get("owner_mobilenumber"),
@@ -67,7 +61,7 @@ class FirebaseService {
     QuerySnapshot snapshot =
         await collection.where('salon_id', isEqualTo: salonid).get();
 
-    return await List.from(
+    return List.from(
         snapshot.docs.map((element) => fromQuerySnapshotService(element)));
   }
 
@@ -75,10 +69,7 @@ class FirebaseService {
     try {
       final CollectionReference collection =
           FirebaseFirestore.instance.collection('Admin');
-      collection.doc(aid).set({
-        "aid": aid,
-        "email": email,
-      });
+      collection.doc(aid).set({"aid": aid, "email": email, "salon_id": aid});
       return 'Admin Stored';
     } on Exception catch (e) {
       return 'Error adding user  ${e.toString()}';
@@ -94,23 +85,26 @@ class FirebaseService {
       String location,
       String salon_id,
       String salon_name,
-      String profileimage,
+      String saloonimage,
       String owner_name,
       String owner_surname,
       String owner_mobilenumber) async {
     try {
       final CollectionReference collection =
           FirebaseFirestore.instance.collection('salons');
+      User? user = await Authentication.getUserId();
+
+      print("aid id ${aid}");
       collection.doc(aid).set({
         "aid": aid,
-        "email": email,
+        "email": user!.email,
         "address": address,
         "category": category,
         "image": image,
         "location": location,
         "salon_id": salon_id,
         "salon_name": salon_name,
-        "profileimage": profileimage,
+        "saloonimage": saloonimage,
         "owner_name": owner_name,
         "owner_surname": owner_surname,
         "owner_mobilenumber": owner_mobilenumber,
@@ -121,27 +115,29 @@ class FirebaseService {
     }
   }
 
-  Future<String?> storeData(String userid, String name, String surname,
-      String email, String phoneno, String address, String photo) async {
+  storeService(String title, int price, String description, String image,
+      String salonId, String serviceId, String service_gender) {
     try {
       final CollectionReference collection =
-          FirebaseFirestore.instance.collection('Users');
-      collection.doc(userid).set({
-        "uid": userid,
-        "Name": name,
-        "Surname": surname,
-        "email": email,
-        "mobilenumber": phoneno,
-        "address": address,
-        "photo": photo
+          FirebaseFirestore.instance.collection('service');
+
+      print("serviceId id ${serviceId}");
+      collection.doc(serviceId).set({
+        "Title": title,
+        "Price": price,
+        "description": description,
+        "image": image,
+        "salon_id": salonId,
+        "service_id": serviceId,
+        "gender": service_gender
       });
-      return 'success';
+      return 'Service Stroed';
     } on Exception catch (e) {
-      return 'Error adding user  ${e.toString()}';
+      return 'Error adding Service  ${e.toString()}';
     }
   }
 
-  Future<String?> uploadImage(PickedFile file, String name) async {
+  Future<String?> uploadImage(File file, String name) async {
     final _firebaseStorage = FirebaseStorage.instance;
     try {
       print("sadgsdgdg   ${file.path}");
@@ -150,6 +146,26 @@ class FirebaseService {
             .ref()
             .child('Users/Profiles/${name}')
             .putFile(File(file.path));
+        var downloadUrl = await snapshot.ref.getDownloadURL();
+        print("sadgsdgdg   ${downloadUrl}");
+        return downloadUrl;
+      } else {
+        print('No Image Path Received');
+      }
+    } on Exception catch (e) {
+      return 'Error adding image  ${e.toString()}';
+    }
+  }
+
+  Future<String?> uploadServiceImage(File file, String name) async {
+    final _firebaseStorage = FirebaseStorage.instance;
+    try {
+      print("sadgsdgdg   ${file.path}");
+      if (file != null) {
+        var snapshot = await _firebaseStorage
+            .ref()
+            .child('Users/SaloonServices/${name}')
+            .putFile(file);
         var downloadUrl = await snapshot.ref.getDownloadURL();
         print("sadgsdgdg   ${downloadUrl}");
         return downloadUrl;

@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,18 +11,22 @@ import 'package:flutter_sticky_header/flutter_sticky_header.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:get/get.dart';
 import 'package:location/location.dart';
-import 'package:salon_admin/profile.dart';
+import 'package:salon_admin/models/ServiceModel.dart';
+import 'package:salon_admin/Screens/Profile_Screen.dart';
 import 'package:salon_admin/services/MainController.dart';
-import 'package:salon_admin/themes.dart';
+import 'package:salon_admin/MyThemes.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'models/AdminModel.dart';
+import '../widgets/common_widgets.dart';
+import 'Add_Services_Screen.dart';
+import 'Search_Screen.dart';
+import '../models/AdminModel.dart';
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key}) : super(key: key);
+class Home_Screen extends StatefulWidget {
+  const Home_Screen({Key? key}) : super(key: key);
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<Home_Screen> createState() => _Home_ScreenState();
 }
 
 void launchMap(String address) async {
@@ -66,25 +73,19 @@ Future<Address> getUserLocation() async {
   return first;
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _Home_ScreenState extends State<Home_Screen> {
   late List<AdminModel> salonlist;
   late final Future<List<AdminModel>> future;
   var maincontroller = Get.find<MainController>();
+  late List<ServiceModel>? servicelist = null;
+
   late Future<Address> first;
   late Address addressfinal;
+  late Widget sliverlist;
 
   @override
   initState() {
     super.initState();
-
-    // print("MYHomePage ::    maincontroller.isusermodelinitilize ${maincontroller.isusermodelinitilize}");
-    // if (maincontroller.isusermodelinitilize == false) {
-    //   maincontroller.getuserdata();
-    //   print("MYHomePage ::    maincontroller.isusermodelinitilize  after maincontroller.getuserdata() ${maincontroller.isusermodelinitilize}");
-    // }
-    // maincontroller.callfirebase();
-
-
     getAdminDataAndService();
     // future =
     first = getUserLocation();
@@ -92,14 +93,20 @@ class _MyHomePageState extends State<MyHomePage> {
 
   getAdminDataAndService() async {
     if (maincontroller.isusermodelinitilize == false) {
-      print("MYHomePage ::    maincontroller.isusermodelinitilize  after maincontroller.getuserdata() ${maincontroller.isusermodelinitilize}");
+      print(
+          "MYHomePage ::    maincontroller.isusermodelinitilize  after maincontroller.getuserdata() ${maincontroller.isusermodelinitilize}");
       await maincontroller.getuserdata();
-      print("MYHomePage ::    maincontroller.isusermodelinitilize  after maincontroller.getuserdata() ${maincontroller.isusermodelinitilize}");
+      print(
+          "MYHomePage ::    maincontroller.isusermodelinitilize  after maincontroller.getuserdata() ${maincontroller.isusermodelinitilize}");
     }
-    maincontroller.callfirebase();
+    maincontroller.loadservicesFromfirebase(
+        maincontroller.modelforintent!.aid.toString());
   }
+
   @override
   Widget build(BuildContext context) {
+    Widget sliverlist;
+
     return SafeArea(
       child: Scaffold(
         backgroundColor: MyThemes.darkblack,
@@ -183,7 +190,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => Profile(),
+                                  builder: (context) => Profile_Screen(),
                                 ));
                           },
                           child: Padding(
@@ -191,13 +198,14 @@ class _MyHomePageState extends State<MyHomePage> {
                             child: Align(
                               alignment: Alignment.centerRight,
                               child: (maincontroller.modelforintent != null &&
-                                      maincontroller.modelforintent?.image !=
+                                      maincontroller
+                                              .modelforintent?.saloonimage !=
                                           null)
                                   ? ClipRRect(
                                       borderRadius: BorderRadius.circular(8.0),
                                       child: CachedNetworkImage(
                                         imageUrl:
-                                            "${maincontroller.modelforintent!.image}",
+                                            "${maincontroller.modelforintent!.saloonimage}",
                                         errorWidget: (context, url, error) =>
                                             Icon(
                                           CupertinoIcons.person_crop_circle,
@@ -250,17 +258,17 @@ class _MyHomePageState extends State<MyHomePage> {
                                     const EdgeInsets.fromLTRB(16, 6, 16, 6),
                                 child: InkWell(
                                   onTap: () {
-                                    // Navigator.push(
-                                    //     context,
-                                    //     MaterialPageRoute(
-                                    //         builder: (context) =>
-                                    //             search_page()));
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                Search_Screen()));
                                   },
                                   child: Row(
                                     children: [
                                       Expanded(
                                         child: Text(
-                                          "Search Your Favourite Saloon!!",
+                                          "Search Perticular Services!!",
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
                                               color: MyThemes.txtdarkwhite,
@@ -287,7 +295,108 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ),
               ),
+              GetBuilder<MainController>(
+                builder: (controller) {
+                  if (controller.servicemodellist.isNotEmpty == true) {
+                    sliverlist = SliverList(
+                      delegate: SliverChildBuilderDelegate(
+                        (context, index) {
+                          return GestureDetector(
+                            onTap: () {
+                              Get.to(AddServiceScreen(
+                                serviceModel: ServiceModel(
+                                    title: controller
+                                        .servicemodellist[index].title,
+                                    description: controller
+                                        .servicemodellist[index].description,
+                                    image: controller
+                                        .servicemodellist[index].image,
+                                    price: controller
+                                        .servicemodellist[index].price,
+                                    salonId: controller
+                                        .servicemodellist[index].salonId,
+                                    serviceId: controller
+                                        .servicemodellist[index].serviceId,
+                                    service_gender: controller
+                                        .servicemodellist[index]
+                                        .service_gender),
+                                file: null,
+                                link: controller.servicemodellist[index].image,
+                                updateornot: true,
+                              ));
+                              //  https://cdn-icons-png.flaticon.com/512/8583/8583104.png
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
+                              child: custom_item_view(
+                                Name: controller.servicemodellist[index].title,
+                                Price: controller.servicemodellist[index].price,
+                                Description: controller
+                                    .servicemodellist[index].description,
+                                imagelink:
+                                    controller.servicemodellist[index].image,
+                              ),
+                            ),
+                          );
+                        },
+                        childCount: controller.servicemodellist.length,
+                      ), //SliverChildBuildDelegate
+                    );
+                  } else {
+                    sliverlist = SliverToBoxAdapter(
+                        child: Center(child: Text("We do not have services")));
+                  }
+                  return sliverlist;
+                },
+              )
             ],
+          ),
+        ),
+        bottomNavigationBar: Container(
+          color: MyThemes.darkblack,
+          child: InkWell(
+            onTap: () {
+              print(
+                  "fdhtfrh  ${maincontroller.modelforintent!.toJson().toString()}");
+              if (maincontroller.modelforintent!.salonname!.isEmpty &&
+                  maincontroller.modelforintent!.owner_name!.isEmpty &&
+                  maincontroller.modelforintent!.owner_surname!.isEmpty &&
+                  maincontroller.modelforintent!.owner_mobilenumber!.isEmpty) {
+                var snackBar =
+                    SnackBar(content: Text('Please Fill These Details First'));
+                ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+                Get.to(Profile_Screen());
+              } else {
+                var random = Random();
+                var serviceId = random.nextInt(4294967296);
+
+                Get.to(AddServiceScreen(
+                  serviceModel: ServiceModel(
+                      title: "",
+                      description: "",
+                      image: "",
+                      price: 0,
+                      salonId: maincontroller.modelforintent!.aid!,
+                      serviceId: serviceId.toString(),
+                      service_gender: "Male"),
+                  file: null,
+                  link:
+                      "https://cdn-icons-png.flaticon.com/512/8583/8583104.png",
+                  updateornot: false,
+                ));
+              }
+
+              //  https://cdn-icons-png.flaticon.com/512/8583/8583104.png
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Container(
+                height: 50,
+                color: MyThemes.purple,
+                child: Center(child: Text("Add Service")),
+              ),
+            ),
           ),
         ),
       ),
