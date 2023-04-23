@@ -14,7 +14,6 @@ import '../MyThemes.dart';
 import 'Home_Screen.dart';
 import 'Login_Screen.dart';
 
-
 class Register_Screen extends StatefulWidget {
   const Register_Screen({Key? key}) : super(key: key);
 
@@ -51,7 +50,17 @@ class _Register_ScreenState extends State<Register_Screen> {
                     child: Text(
                       "Welcome to My Saloon",
                       style:
-                      TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
+                    ),
+                  ),
+                ),
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
+                  child: Center(
+                    child: Text(
+                      "Register to Your Saloon",
+                      style: TextStyle(
+                          fontWeight: FontWeight.normal, fontSize: 20),
                     ),
                   ),
                 ),
@@ -92,30 +101,29 @@ class _Register_ScreenState extends State<Register_Screen> {
                                   child: InkWell(
                                     onTap: () async {
                                       User? user =
-                                      await Authentication.signInWithGoogle(
-                                          context: context);
+                                          await Authentication.signInWithGoogle(
+                                              context: context);
                                       if (user != null) {
                                         setState(() {
                                           changebutton = true;
                                         });
                                         await Future.delayed(
                                             Duration(seconds: 1));
-                                        await postDetailsToFirestore(user);
                                         maincontroller.getuserdata().then(
-                                              (value) {
+                                          (value) async {
                                             print(
-                                                "maincontroller.modelforintent   ::  ${maincontroller
-                                                    .modelforintent}");
+                                                "maincontroller.modelforintent   ::  ${maincontroller.modelforintent!.toJson()}");
                                             if (maincontroller
-                                                .modelforintent!.aid !=
-                                                "") {
-                                              Get.to(Home_Screen());
+                                                        .modelforintent!.aid !=
+                                                    "" &&
+                                                maincontroller.modelforintent!
+                                                        .owner_mobilenumber !=
+                                                    "") {
+                                              Get.offAll(Home_Screen());
                                             } else {
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                      const Signup_Process_Screen()));
+                                              await postDetailsToFirestore(
+                                                  user);
+                                              Get.off(Signup_Process_Screen());
                                             }
                                           },
                                         );
@@ -133,26 +141,26 @@ class _Register_ScreenState extends State<Register_Screen> {
                                       alignment: Alignment.center,
                                       child: changebutton
                                           ? Icon(
-                                        Icons.done,
-                                        color: Colors.white,
-                                      )
+                                              Icons.done,
+                                              color: Colors.white,
+                                            )
                                           : Row(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment.center,
-                                        children: [
-                                          Padding(
-                                              padding: const EdgeInsets
-                                                  .fromLTRB(0, 0, 8, 0),
-                                              child: Image.asset(
-                                                  "assets/googleicon.png",
-                                                  height: 35,
-                                                  fit: BoxFit.cover)),
-                                          Text("Sign in with Google",
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 15)),
-                                        ],
-                                      ),
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Padding(
+                                                    padding: const EdgeInsets
+                                                        .fromLTRB(0, 0, 8, 0),
+                                                    child: Image.asset(
+                                                        "assets/googleicon.png",
+                                                        height: 35,
+                                                        fit: BoxFit.cover)),
+                                                Text("Sign in with Google",
+                                                    style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 15)),
+                                              ],
+                                            ),
                                     ),
                                   ),
                                 ),
@@ -183,9 +191,12 @@ class _Register_ScreenState extends State<Register_Screen> {
                                     type: PageTransitionType.fade,
                                     child: Login_Screen()));
                           },
-                          child: Text(
-                            "Want to go Login ??",
-                            style: TextStyle(color: MyThemes.txtdarkwhite),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              "Want to go Login ??",
+                              style: TextStyle(color: MyThemes.txtdarkwhite),
+                            ),
                           )),
                     ),
                   ],
@@ -203,23 +214,11 @@ class _Register_ScreenState extends State<Register_Screen> {
         .storeAdmin(user!.uid, user.email.toString())
         .then((value) async {
       print(
-          "postDetailsToFirestore ::store ADMIN ${value}  email :: ${user.email
-              .toString()}");
+          "postDetailsToFirestore ::store ADMIN ${value}  email :: ${user.email.toString()}");
       if (value == "Admin Stored") {
         await maincontroller
-            .storeSaloon(
-            user!.uid,
-            user.email.toString(),
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "")
+            .storeSaloon(user!.uid, user.email.toString(), "", "", "", "", "",
+                "", "", "", "", "")
             .then((value) async {
           print("postDetailsToFirestore ::store Salon ${value}");
         });
@@ -231,6 +230,6 @@ class _Register_ScreenState extends State<Register_Screen> {
     Navigator.pushAndRemoveUntil(
         (context),
         MaterialPageRoute(builder: (context) => Home_Screen()),
-            (route) => false);
+        (route) => false);
   }
 }

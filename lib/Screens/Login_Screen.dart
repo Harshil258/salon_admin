@@ -50,6 +50,16 @@ class _Login_ScreenState extends State<Login_Screen> {
                     ),
                   ),
                 ),
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
+                  child: Center(
+                    child: Text(
+                      "Login to Your Saloon",
+                      style: TextStyle(
+                          fontWeight: FontWeight.normal, fontSize: 20),
+                    ),
+                  ),
+                ),
                 Padding(
                   padding: const EdgeInsets.symmetric(
                       horizontal: 16.0, vertical: 50),
@@ -80,35 +90,29 @@ class _Login_ScreenState extends State<Login_Screen> {
                             child: InkWell(
                               onTap: () async {
                                 User? user =
-                                    await Authentication.signInWithGoogle(context: context);
-                                print("current user :: ${user!.email.toString()}");
+                                    await Authentication.signInWithGoogle(
+                                        context: context);
                                 if (user != null) {
                                   setState(() {
                                     changebutton = true;
                                   });
-                                  await maincontroller
-                                      .getuserdata()
-                                      .then((value) async {
-                                    await Future.delayed(Duration(seconds: 1));
-
-                                    print(
-                                        "detailPagecontroller modelforintent : ${maincontroller.modelforintent!.aid}");
-
-                                    if (maincontroller.modelforintent!.aid !=
-                                        "") {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  Home_Screen()));
-                                    } else {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  Signup_Process_Screen()));
-                                    }
-                                  });
+                                  await Future.delayed(Duration(seconds: 1));
+                                  maincontroller.getuserdata().then(
+                                    (value) async {
+                                      print(
+                                          "maincontroller.modelforintent   ::  ${maincontroller.modelforintent!.toJson()}");
+                                      if (maincontroller.modelforintent!.aid !=
+                                              "" &&
+                                          maincontroller.modelforintent!
+                                                  .owner_mobilenumber !=
+                                              "") {
+                                        Get.offAll(Home_Screen());
+                                      } else {
+                                        await postDetailsToFirestore(user);
+                                        Get.off(Signup_Process_Screen());
+                                      }
+                                    },
+                                  );
 
                                   setState(() {
                                     changebutton = false;
@@ -165,12 +169,16 @@ class _Login_ScreenState extends State<Login_Screen> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => const Register_Screen()));
+                                    builder: (context) =>
+                                        const Register_Screen()));
                           },
-                          child: Text(
-                            "Want to Register ??",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: MyThemes.txtdarkwhite),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              "Want to Register ??",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(color: MyThemes.txtdarkwhite),
+                            ),
                           )),
                     ),
                   ],
@@ -183,23 +191,27 @@ class _Login_ScreenState extends State<Login_Screen> {
     );
   }
 
-  bool _validate({required String email, required String password}) {
-    if (email.isEmpty && password.isEmpty) {
-      Toasty.showtoast('Please Enter Your Credentials');
-      return false;
-    } else if (email.isEmpty) {
-      Toasty.showtoast('Please Enter Your Email Address');
-      return false;
-    } else if (!RegExp("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+.[a-z]")
-        .hasMatch(email)) {
-      //(!RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(email)) {
-      Toasty.showtoast('Please Enter Valid Email Address');
-      return false;
-    } else if (password.isEmpty) {
-      Toasty.showtoast('Please Enter Your Password');
-      return false;
-    } else {
-      return true;
-    }
+  postDetailsToFirestore(User? user) async {
+    await maincontroller
+        .storeAdmin(user!.uid, user.email.toString())
+        .then((value) async {
+      print(
+          "postDetailsToFirestore ::store ADMIN ${value}  email :: ${user.email.toString()}");
+      if (value == "Admin Stored") {
+        await maincontroller
+            .storeSaloon(user!.uid, user.email.toString(), "", "", "", "", "",
+                "", "", "", "", "")
+            .then((value) async {
+          print("postDetailsToFirestore ::store Salon ${value}");
+        });
+      }
+    });
+
+    Fluttertoast.showToast(msg: "Account created successfully : ");
+
+    Navigator.pushAndRemoveUntil(
+        (context),
+        MaterialPageRoute(builder: (context) => Home_Screen()),
+        (route) => false);
   }
 }

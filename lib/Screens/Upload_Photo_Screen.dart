@@ -14,10 +14,12 @@ class Upload_Photo_Preview_Screen extends StatefulWidget {
   const Upload_Photo_Preview_Screen({Key? key}) : super(key: key);
 
   @override
-  State<Upload_Photo_Preview_Screen> createState() => _Upload_Photo_Preview_ScreenState();
+  State<Upload_Photo_Preview_Screen> createState() =>
+      _Upload_Photo_Preview_ScreenState();
 }
 
-class _Upload_Photo_Preview_ScreenState extends State<Upload_Photo_Preview_Screen> {
+class _Upload_Photo_Preview_ScreenState
+    extends State<Upload_Photo_Preview_Screen> {
   @override
   void initState() {
     print(
@@ -95,9 +97,13 @@ class _Upload_Photo_Preview_ScreenState extends State<Upload_Photo_Preview_Scree
                       padding: const EdgeInsets.fromLTRB(22, 10, 22, 10),
                       child: InkWell(
                         onTap: () async {
-                          await Permission.photos.request();
-                          var permissionStatus = await Permission.photos.status;
-                          if (permissionStatus.isGranted) {
+                          Map<Permission, PermissionStatus> statuses = await [
+                            Permission.storage,
+                          ].request();
+                          print(
+                              "permissionStatus :: ${statuses[Permission.storage]}");
+                          if (statuses[Permission.storage] ==
+                              PermissionStatus.granted) {
                             final _imagePicker = ImagePicker();
                             final PickedFile? image = await _imagePicker
                                 .getImage(source: ImageSource.gallery);
@@ -109,6 +115,12 @@ class _Upload_Photo_Preview_ScreenState extends State<Upload_Photo_Preview_Scree
                                       builder: (context) =>
                                           Upload_Photo_preview(file, "")));
                             }
+                          } else {
+                            Map<Permission, PermissionStatus> statuses = await [
+                              Permission.storage,
+                            ].request();
+                            print(
+                                "permissionStatus :: ${statuses[Permission.storage]}");
                           }
                         },
                         child: Card(
@@ -130,9 +142,13 @@ class _Upload_Photo_Preview_ScreenState extends State<Upload_Photo_Preview_Scree
                       padding: const EdgeInsets.fromLTRB(22, 0, 22, 10),
                       child: InkWell(
                         onTap: () async {
-                          await Permission.photos.request();
-                          var permissionStatus = await Permission.photos.status;
-                          if (permissionStatus.isGranted) {
+                          Map<Permission, PermissionStatus> statuses = await [
+                            Permission.storage,
+                          ].request();
+                          print(
+                              "permissionStatus :: ${statuses[Permission.storage]}");
+                          if (statuses[Permission.storage] ==
+                              PermissionStatus.granted) {
                             final _imagePicker = ImagePicker();
                             final PickedFile? image = await _imagePicker
                                 .getImage(source: ImageSource.camera);
@@ -144,6 +160,12 @@ class _Upload_Photo_Preview_ScreenState extends State<Upload_Photo_Preview_Scree
                                       builder: (context) =>
                                           Upload_Photo_preview(file, "")));
                             }
+                          } else {
+                            Map<Permission, PermissionStatus> statuses = await [
+                              Permission.storage,
+                            ].request();
+                            print(
+                                "permissionStatus :: ${statuses[Permission.storage]}");
                           }
                         },
                         child: Card(

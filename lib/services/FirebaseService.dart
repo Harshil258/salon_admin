@@ -25,7 +25,7 @@ class FirebaseService {
     if (model.data().isNull) {
       return AdminModel(
         aid: user!.uid,
-        email: "",
+        email: user.email,
         address: "",
         category: "",
         image: "",

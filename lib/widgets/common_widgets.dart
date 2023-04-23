@@ -14,6 +14,72 @@ import '../Screens/Login_Screen.dart';
 import '../MyThemes.dart';
 import '../util/routes.dart';
 
+class MarqueeWidget extends StatefulWidget {
+  final Widget child;
+  final Axis direction;
+  final Duration animationDuration, backDuration, pauseDuration;
+
+  const MarqueeWidget({
+    Key? key,
+    required this.child,
+    this.direction = Axis.horizontal,
+    this.animationDuration = const Duration(milliseconds: 6000),
+    this.backDuration = const Duration(milliseconds: 800),
+    this.pauseDuration = const Duration(milliseconds: 800),
+  }) : super(key: key);
+
+  @override
+  _MarqueeWidgetState createState() => _MarqueeWidgetState();
+}
+
+class _MarqueeWidgetState extends State<MarqueeWidget> {
+  late ScrollController scrollController;
+
+  @override
+  void initState() {
+    scrollController = ScrollController(initialScrollOffset: 50.0);
+    WidgetsBinding.instance.addPostFrameCallback(scroll);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      physics: NeverScrollableScrollPhysics(),
+      child: widget.child,
+      scrollDirection: widget.direction,
+      controller: scrollController,
+    );
+  }
+
+  void scroll(_) async {
+    while (scrollController.hasClients) {
+      await Future.delayed(widget.pauseDuration);
+      if (scrollController.hasClients) {
+        await scrollController.animateTo(
+          scrollController.position.maxScrollExtent,
+          duration: widget.animationDuration,
+          curve: Curves.ease,
+        );
+      }
+      await Future.delayed(widget.pauseDuration);
+      if (scrollController.hasClients) {
+        await scrollController.animateTo(
+          0.0,
+          duration: widget.backDuration,
+          curve: Curves.easeOut,
+        );
+      }
+    }
+  }
+}
+
 class Toasty {
   static showtoast(String message) {
     Fluttertoast.showToast(
@@ -258,10 +324,7 @@ class _custom_item_viewState extends State<custom_item_view> {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-          border: Border.all(
-            color: MyThemes.lightblack,
-            width: 2
-          ),
+          border: Border.all(color: MyThemes.lightblack, width: 2),
           borderRadius: BorderRadius.all(Radius.circular(20))),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -320,15 +383,15 @@ class _custom_item_viewState extends State<custom_item_view> {
                         child: CachedNetworkImage(
                           imageUrl: "${widget.imagelink}",
                           placeholder: (context, url) => Center(
-                            child: Center(
-                              child: CircularProgressIndicator(
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  MyThemes.purple,
-                                ),
+                              child: Center(
+                            child: CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                MyThemes.purple,
                               ),
-                            )
-                          ),
-                          errorWidget: (context, url, error) => Icon(Icons.error),
+                            ),
+                          )),
+                          errorWidget: (context, url, error) =>
+                              Icon(Icons.error),
                           height: 120,
                           width: 110,
                           fit: BoxFit.cover,

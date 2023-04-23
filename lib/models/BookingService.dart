@@ -39,6 +39,10 @@ class BookingService {
 
   List<dynamic>? servicesId;
 
+  final String status;
+
+  final String bookingID;
+
   BookingService({
     this.userEmail,
     this.userPhoneNumber,
@@ -49,10 +53,12 @@ class BookingService {
     required this.serviceName,
     required this.serviceDuration,
     this.servicePrice,
-    required this.servicesId
+    required this.servicesId,
+    required this.status,
+    required this.bookingID
   });
 
-  BookingService.fromJson(Map<String, dynamic> json)
+  BookingService.fromJson(String id,Map<String, dynamic> json)
       : userEmail = json['userEmail'] as String?,
         userPhoneNumber = json['userPhoneNumber'] as String?,
         userId = json['userId'] as String?,
@@ -60,8 +66,10 @@ class BookingService {
         bookingStart = DateTime.parse(json['bookingStart'] as String),
         bookingEnd = DateTime.parse(json['bookingEnd'] as String),
         serviceName = json['serviceName'] as String,
+        bookingID = id,
         serviceDuration = json['serviceDuration'] as int,
         servicePrice = json['servicePrice'] as int,
+        status = (json['status'].toString() == "null") ? "PENDING" : json['status'],
         servicesId = json['servicesId'] as List<dynamic>?;
 
   Map<String, dynamic> toJson() =>
@@ -76,6 +84,7 @@ class BookingService {
         'bookingStart': bookingStart.toIso8601String(),
         'bookingEnd': bookingEnd.toIso8601String(),
         'bookingEnd': bookingEnd.toIso8601String(),
-        'servicesId': servicesId
+        'servicesId': servicesId,
+        'status': status,
       };
 }

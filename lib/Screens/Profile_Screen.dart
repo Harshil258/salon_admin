@@ -13,6 +13,7 @@ import 'package:intl/intl.dart';
 
 import '../models/BookingService.dart';
 import '../models/ServiceModel.dart';
+import '../widgets/common_widgets.dart';
 
 class Profile_Screen extends StatefulWidget {
   const Profile_Screen({Key? key}) : super(key: key);
@@ -29,10 +30,37 @@ class _Profile_ScreenState extends State<Profile_Screen> {
   @override
   void initState() {
     super.initState();
+    // detailPagecontroller.bookingEvents.clear();
+    // fetchConfirmedBookings(detailPagecontroller.modelforintent!.aid.toString())
+    //     .then((value) {
+    //   value.forEach((element) {
+    //     print("rherhrh  :: ${element.bookingID}");
+    //     detailPagecontroller.bookingEvents.add(CalendarEvent(
+    //         eventName: element.userId.toString(),
+    //         eventDate: element.bookingStart,
+    //         bookingStart: element.bookingStart,
+    //         bookingEnd: element.bookingEnd,
+    //         servicesId: element.servicesId,
+    //         userEmail: element.userEmail,
+    //         eventBackgroundColor: MyThemes.purple,
+    //         userName: element.userName.toString(),
+    //         userPhoneNumber: element.userPhoneNumber,
+    //         status: element.status,
+    //         bookingID: element.bookingID,
+    //         servicePrice: element.servicePrice!.toInt()));
+    //   });
+    //   listOfBookingServices = value;
+    //   setState(() {});
+    // });
+    callinitstate();
+  }
+
+  void callinitstate() {
     detailPagecontroller.bookingEvents.clear();
     fetchConfirmedBookings(detailPagecontroller.modelforintent!.aid.toString())
         .then((value) {
       value.forEach((element) {
+        print("rherhrh  :: ${element.bookingID}");
         detailPagecontroller.bookingEvents.add(CalendarEvent(
             eventName: element.userId.toString(),
             eventDate: element.bookingStart,
@@ -43,6 +71,8 @@ class _Profile_ScreenState extends State<Profile_Screen> {
             eventBackgroundColor: MyThemes.purple,
             userName: element.userName.toString(),
             userPhoneNumber: element.userPhoneNumber,
+            status: element.status,
+            bookingID: element.bookingID,
             servicePrice: element.servicePrice!.toInt()));
       });
       listOfBookingServices = value;
@@ -59,9 +89,16 @@ class _Profile_ScreenState extends State<Profile_Screen> {
         .collection('bookings')
         .get();
 
-    bookingstemp = instance.docs
-        .map((doc) => BookingService.fromJson(doc.data()))
-        .toList();
+    bookingstemp = instance.docs.map((doc) {
+      print("dhjsetjghjdgfjt    ::  ${doc.id}");
+
+      return BookingService.fromJson(doc.id, doc.data());
+    }).toList();
+
+    instance.docs.forEach((element) {
+      print("dhjsetjt    ::  ${element.id}");
+    });
+
     print('All Bookings With this id :: ${aid} :: ${bookingstemp[0].toJson()}');
     List<BookingService> finalbooking = bookingstemp
       ..sort((a, b) => a.bookingStart.compareTo(b.bookingStart));
@@ -449,9 +486,12 @@ class _Profile_ScreenState extends State<Profile_Screen> {
                                                                                               children: [
                                                                                                 Row(
                                                                                                   children: [
-                                                                                                    Text(
-                                                                                                      snapshot.data![index].title,
-                                                                                                      style: TextStyle(color: MyThemes.darkblack, fontSize: 17, fontWeight: FontWeight.bold),
+                                                                                                    MarqueeWidget(
+                                                                                                      child: Text(
+                                                                                                        snapshot.data![index].title,
+                                                                                                        style: TextStyle(color: MyThemes.darkblack, fontSize: 17, fontWeight: FontWeight.bold),
+                                                                                                      ),
+                                                                                                      direction: Axis.horizontal,
                                                                                                     ),
                                                                                                   ],
                                                                                                 ),
@@ -462,9 +502,9 @@ class _Profile_ScreenState extends State<Profile_Screen> {
                                                                                                     children: [
                                                                                                       Column(
                                                                                                         children: [
-                                                                                                          Text(DateFormat("hh:mm").format(event.bookingStart!), style: TextStyle(color: MyThemes.darkblack, fontSize: 16)),
+                                                                                                          MarqueeWidget(child: Text(DateFormat("hh:mm").format(event.bookingStart!), style: TextStyle(color: MyThemes.darkblack, fontSize: 16)), direction: Axis.horizontal),
                                                                                                           Text("To", style: TextStyle(color: MyThemes.darkblack, fontSize: 16)),
-                                                                                                          Text(DateFormat("hh:mm").format(event.bookingEnd!), style: TextStyle(color: MyThemes.darkblack, fontSize: 16)),
+                                                                                                          MarqueeWidget(child: Text(DateFormat("hh:mm").format(event.bookingEnd!), style: TextStyle(color: MyThemes.darkblack, fontSize: 16)), direction: Axis.horizontal),
                                                                                                         ],
                                                                                                       ),
                                                                                                     ],
@@ -525,14 +565,207 @@ class _Profile_ScreenState extends State<Profile_Screen> {
                                                                           const EdgeInsets.all(
                                                                               8.0),
                                                                       child:
-                                                                          Text(
-                                                                        "Total Bill Of :  ${event.servicePrice} ₹",
-                                                                        style: TextStyle(
-                                                                            color:
-                                                                                MyThemes.darkblack,
-                                                                            fontSize: 20),
+                                                                          MarqueeWidget(
+                                                                        direction:
+                                                                            Axis.horizontal,
+                                                                        child:
+                                                                            Text(
+                                                                          "Total Bill Of :  ${event.servicePrice} ₹",
+                                                                          style: TextStyle(
+                                                                              color: MyThemes.darkblack,
+                                                                              fontSize: 20),
+                                                                        ),
                                                                       ),
                                                                     ),
+                                                                  ],
+                                                                ),
+                                                                ("${event.status}" ==
+                                                                        "PENDING")
+                                                                    ? ElevatedButton(
+                                                                        onPressed:
+                                                                            () {
+                                                                          print(
+                                                                              "event.bookingID :: ${event.bookingID}");
+                                                                          FirebaseFirestore
+                                                                              .instance
+                                                                              .collection(
+                                                                                  'salons')
+                                                                              .doc(detailPagecontroller
+                                                                                  .modelforintent!.aid)
+                                                                              .collection(
+                                                                                  'bookings')
+                                                                              .doc(event
+                                                                                  .bookingID)
+                                                                              .set({
+                                                                            'status':
+                                                                                'CANCELED'
+                                                                          }, SetOptions(merge: true)).then((value) {
+                                                                            var snackBar =
+                                                                                SnackBar(content: Text('You have sucessfully cancelled appointment!!'));
+                                                                            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                                                                            callinitstate();
+                                                                            Navigator.pop(context);
+                                                                          });
+                                                                        },
+                                                                        style: ElevatedButton.styleFrom(
+                                                                            backgroundColor: MyThemes
+                                                                                .purple),
+                                                                        child:
+                                                                            Text(
+                                                                          "CANCEL THIS APPOINTMENT",
+                                                                          style: TextStyle(
+                                                                              color: MyThemes.txtwhite,
+                                                                              fontSize: 10),
+                                                                        ))
+                                                                    : Container(),
+                                                                ("${event.status}" ==
+                                                                        "CANCELED")
+                                                                    ? ElevatedButton(
+                                                                        onPressed:
+                                                                            () {},
+                                                                        style: ElevatedButton.styleFrom(
+                                                                            backgroundColor: MyThemes
+                                                                                .purple),
+                                                                        child:
+                                                                            Text(
+                                                                          "YOU CANCELLED THE APPOINTMENT",
+                                                                          style: TextStyle(
+                                                                              color: MyThemes.txtwhite,
+                                                                              fontSize: 10),
+                                                                        ))
+                                                                    : Container(),
+                                                                ("${event.status}" ==
+                                                                    "DONE")
+                                                                    ? ElevatedButton(
+                                                                    onPressed:
+                                                                        () {},
+                                                                    style: ElevatedButton.styleFrom(
+                                                                        backgroundColor: MyThemes
+                                                                            .purple),
+                                                                    child:
+                                                                    Text(
+                                                                      "APPOINTMENT IS COMPLETED BY YOU",
+                                                                      style: TextStyle(
+                                                                          color: MyThemes.txtwhite,
+                                                                          fontSize: 10),
+                                                                    ))
+                                                                    : Container(),
+                                                                ("${event.status}" ==
+                                                                        "PENDING")
+                                                                    ? ElevatedButton(
+                                                                        onPressed:
+                                                                            () {
+                                                                          FirebaseFirestore
+                                                                              .instance
+                                                                              .collection(
+                                                                                  'salons')
+                                                                              .doc(detailPagecontroller
+                                                                                  .modelforintent!.aid)
+                                                                              .collection(
+                                                                                  'bookings')
+                                                                              .doc(event
+                                                                                  .bookingID)
+                                                                              .set({
+                                                                            'status':
+                                                                                'DONE'
+                                                                          }, SetOptions(merge: true)).then((value) {
+                                                                            var snackBar =
+                                                                                SnackBar(content: Text('You have sucessfully completed appointment!!'));
+                                                                            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                                                                            callinitstate();
+                                                                            Navigator.pop(context);
+                                                                          });
+                                                                        },
+                                                                        style: ElevatedButton.styleFrom(
+                                                                            backgroundColor: MyThemes
+                                                                                .purple),
+                                                                        child:
+                                                                            Text(
+                                                                          "DONE",
+                                                                          style: TextStyle(
+                                                                              color: MyThemes.txtwhite,
+                                                                              fontSize: 10),
+                                                                        ))
+                                                                    : Container(),
+
+                                                                (event.bookingStart!.isBefore(DateTime
+                                                                            .now()) ==
+                                                                        true)
+                                                                    ? ElevatedButton(
+                                                                        onPressed:
+                                                                            () {
+                                                                          FirebaseFirestore
+                                                                              .instance
+                                                                              .collection('salons')
+                                                                              .doc(detailPagecontroller.modelforintent!.aid)
+                                                                              .collection('bookings')
+                                                                              .doc(event.bookingID)
+                                                                              .delete()
+                                                                              .then((value) {
+                                                                            var snackBar =
+                                                                                SnackBar(content: Text('You have deleted appointment Sucessfully!!'));
+                                                                            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                                                                            callinitstate();
+                                                                            Navigator.pop(context);
+                                                                          });
+                                                                        },
+                                                                        style: ElevatedButton.styleFrom(
+                                                                            backgroundColor: MyThemes
+                                                                                .purple),
+                                                                        child:
+                                                                            Text(
+                                                                          "DELETE THIS BOOKING ?",
+                                                                          style: TextStyle(
+                                                                              color: MyThemes.txtwhite,
+                                                                              fontSize: 10),
+                                                                        ))
+                                                                    : Container(),
+                                                                Row(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .spaceBetween,
+                                                                  children: [
+                                                                    /*   Container(
+                                                                      height:
+                                                                          50,
+                                                                      color: MyThemes
+                                                                          .purple,
+                                                                      child:
+                                                                          Padding(
+                                                                        padding:
+                                                                            const EdgeInsets.all(8.0),
+                                                                        child: "${event.status}" ==
+                                                                                "PENDING"
+                                                                            ? Text(
+                                                                                "CANCEL THE APPOINTMENT",
+                                                                                style: TextStyle(color: MyThemes.darkblack, fontSize: 10),
+                                                                              )
+                                                                            : Container(),
+                                                                      ),
+                                                                    ),
+                                                                    Container(
+                                                                      height:
+                                                                          50,
+                                                                      color: MyThemes
+                                                                          .purple,
+                                                                      child:
+                                                                          Padding(
+                                                                        padding:
+                                                                            const EdgeInsets.all(8.0),
+                                                                        child: "${event.status}" ==
+                                                                                "PENDING"
+                                                                            ? Text(
+                                                                                "IS SERVICE DONE ?",
+                                                                                style: TextStyle(color: MyThemes.darkblack, fontSize: 10),
+                                                                              )
+                                                                            : "${event.status}" == "CANCELED"
+                                                                                ? Text(
+                                                                                    "YOU CANCELLED THIS BOOKING",
+                                                                                    style: TextStyle(color: MyThemes.darkblack, fontSize: 10),
+                                                                                  )
+                                                                                : Container(),
+                                                                      ),
+                                                                    ),*/
                                                                   ],
                                                                 ),
                                                               ],
