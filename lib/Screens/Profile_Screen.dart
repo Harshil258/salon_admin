@@ -4,12 +4,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:readmore/readmore.dart';
+import 'package:intl/intl.dart';
+import 'package:salon_admin/MyThemes.dart';
+import 'package:salon_admin/Screens/Signup_Process_Screen.dart';
 import 'package:salon_admin/services/MainController.dart';
 import 'package:salon_admin/services/auth.dart';
-import 'package:salon_admin/Screens/Signup_Process_Screen.dart';
-import 'package:salon_admin/MyThemes.dart';
-import 'package:intl/intl.dart';
 
 import '../models/BookingService.dart';
 import '../models/ServiceModel.dart';
@@ -187,23 +186,38 @@ class _Profile_ScreenState extends State<Profile_Screen> {
                               children: [
                                 Expanded(
                                   child: Padding(
-                                      padding: const EdgeInsets.fromLTRB(
-                                          22, 0, 22, 0),
-                                      child: TextFormField(
-                                        cursorColor: MyThemes.txtwhite,
-                                        initialValue:
-                                            ("${maincontroller.modelforintent!.salonname}")
-                                                    .trim()
-                                                    .isNotEmpty
-                                                ? "${maincontroller.modelforintent!.salonname}"
-                                                : "Salon name is not set",
-                                        autofocus: false,
-                                        readOnly: editable,
+                                    padding:
+                                        const EdgeInsets.fromLTRB(22, 0, 22, 0),
+                                    child: MarqueeWidget(
+                                      direction: Axis.horizontal,
+                                      child: Text(
+                                        ("${maincontroller.modelforintent!.salonname}")
+                                                .trim()
+                                                .isNotEmpty
+                                            ? "${maincontroller.modelforintent!.salonname}"
+                                            : "Salon name is not set",
                                         style: TextStyle(
                                             color: MyThemes.txtwhite,
                                             fontSize: 27,
                                             fontWeight: FontWeight.bold),
-                                      )),
+                                      ),
+                                    ),
+                                    // TextFormField(
+                                    //   cursorColor: MyThemes.txtwhite,
+                                    //   initialValue:
+                                    //       ("${maincontroller.modelforintent!.salonname}")
+                                    //               .trim()
+                                    //               .isNotEmpty
+                                    //           ? "${maincontroller.modelforintent!.salonname}"
+                                    //           : "Salon name is not set",
+                                    //   autofocus: false,
+                                    //   readOnly: editable,
+                                    //   style: TextStyle(
+                                    //       color: MyThemes.txtwhite,
+                                    //       fontSize: 27,
+                                    //       fontWeight: FontWeight.bold),
+                                    // )
+                                  ),
                                 ),
                                 InkWell(
                                   child: Padding(
@@ -612,7 +626,7 @@ class _Profile_ScreenState extends State<Profile_Screen> {
                                                                                 .purple),
                                                                         child:
                                                                             Text(
-                                                                          "CANCEL THIS APPOINTMENT",
+                                                                          "WANT TO CANCEL THIS APPOINTMENT?",
                                                                           style: TextStyle(
                                                                               color: MyThemes.txtwhite,
                                                                               fontSize: 10),
@@ -635,23 +649,28 @@ class _Profile_ScreenState extends State<Profile_Screen> {
                                                                         ))
                                                                     : Container(),
                                                                 ("${event.status}" ==
-                                                                    "DONE")
+                                                                        "DONE")
                                                                     ? ElevatedButton(
-                                                                    onPressed:
-                                                                        () {},
-                                                                    style: ElevatedButton.styleFrom(
-                                                                        backgroundColor: MyThemes
-                                                                            .purple),
-                                                                    child:
-                                                                    Text(
-                                                                      "APPOINTMENT IS COMPLETED BY YOU",
-                                                                      style: TextStyle(
-                                                                          color: MyThemes.txtwhite,
-                                                                          fontSize: 10),
-                                                                    ))
+                                                                        onPressed:
+                                                                            () {},
+                                                                        style: ElevatedButton.styleFrom(
+                                                                            backgroundColor: MyThemes
+                                                                                .purple),
+                                                                        child:
+                                                                            Text(
+                                                                          "APPOINTMENT IS COMPLETED BY YOU",
+                                                                          style: TextStyle(
+                                                                              color: MyThemes.txtwhite,
+                                                                              fontSize: 10),
+                                                                        ))
                                                                     : Container(),
                                                                 ("${event.status}" ==
-                                                                        "PENDING")
+                                                                            "PENDING" &&
+                                                                        event
+                                                                            .bookingStart!
+                                                                            .day
+                                                                            .isEqual(DateTime.now()
+                                                                                .day))
                                                                     ? ElevatedButton(
                                                                         onPressed:
                                                                             () {
@@ -687,7 +706,6 @@ class _Profile_ScreenState extends State<Profile_Screen> {
                                                                               fontSize: 10),
                                                                         ))
                                                                     : Container(),
-
                                                                 (event.bookingStart!.isBefore(DateTime
                                                                             .now()) ==
                                                                         true)

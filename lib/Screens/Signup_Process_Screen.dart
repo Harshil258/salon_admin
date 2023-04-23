@@ -58,10 +58,15 @@ class _Signup_Process_ScreenState extends State<Signup_Process_Screen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.all(22.0),
-                      child: SvgPicture.asset(
-                        "assets/backpurple.svg",
+                    GestureDetector(
+                      onTap: () {
+                        Get.back();
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(22.0),
+                        child: SvgPicture.asset(
+                          "assets/backpurple.svg",
+                        ),
                       ),
                     ),
                     Padding(
